@@ -114,8 +114,7 @@ class QemuGuestAgentTest(BaseVirtTest):
         session = self._get_session(params, vm)
         s, o = session.cmd_status_output(gagent_install_cmd)
         if s:
-            error.TestFail("Could not install qemu-guest-agent package"
-                                 " in VM '%s', detail: '%s'" % (vm.name, o))
+            error.TestFail("Could not install qemu-guest-agent package in VM '%s'",                                                                               "detail: '%s'" % (vm.name, o))
 
     def gagent_start(self, params, vm, *args):
         if args and isinstance(args, tuple):
@@ -168,8 +167,7 @@ class QemuGuestAgentTest(BaseVirtTest):
         logging.info("Check if guest agent work.",)
 
         if not self.gagent:
-            test.error("Could not find guest agent object"
-                                  "for VM '%s'" % vm.name)
+            test.error("Could not find guest agent object"                                                                                                    "for VM '%s'" % vm.name)
 
         self.gagent.verify_responsive()
         logging.info(self.gagent.cmd("guest-info"))
@@ -221,8 +219,7 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
         self.gagent.sync()
 
     def __gagent_check_shutdown(self, shutdown_mode):
-        logging.info("Check guest agent command 'guest-shutdown'"
-                      ", shutdown mode '%s'" % shutdown_mode)
+        logging.info("Check guest agent command 'guest-shutdown'"                                                                                           ", shutdown mode '%s'" % shutdown_mode)
         if not self.env or not self.params:
             test.error("You should run 'setup' method before test")
 
@@ -381,12 +378,12 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
         logging.info("get the time of the guest")
         nanoseconds_time = self.gagent.get_time()
         logging.info("the time get by guest-get-time is '%d' "
-                      % nanoseconds_time)
+                     % nanoseconds_time)
         guest_time = session.cmd_output(get_guest_time_cmd)
         if not guest_time:
             test.error("can't get the guest time for contrast")
         logging.info("the time get inside guest by shell cmd is '%d' "
-                      % int(guest_time))
+                     % int(guest_time))
         delta = abs(int(guest_time) - nanoseconds_time / 1000000000)
         if delta > 3:
             raise error.TestFail("the time get by guest agent is not the same "
@@ -407,13 +404,13 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
         if not guest_time_before:
             test.error("can't get the guest time for contrast")
         logging.info("the time before being moved back into past  is '%d' "
-                      % int(guest_time_before))
+                     % int(guest_time_before))
         # Need to move the guest time one week into the past
         target_time = (int(guest_time_before) - 604800) * 1000000000
         self.gagent.set_time(target_time)
         guest_time_after = session.cmd_output(get_guest_time_cmd)
         logging.info("the time after being moved back into past  is '%d' "
-                      % int(guest_time_after))
+                     % int(guest_time_after))
         delta = abs(int(guest_time_after) - target_time / 1000000000)
         if delta > 3:
             raise error.TestFail("the time set for guest is not the same "
@@ -427,11 +424,11 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
             session.cmd(move_time_cmd)
             time_after_move = session.cmd_output("date +%s")
             logging.info("the time after move back is '%d' "
-                          % int(time_after_move))
+                         % int(time_after_move))
             self.gagent.set_time()
             guest_time_after_reset = session.cmd_output(get_guest_time_cmd)
             logging.info("the time after being reset is '%d' "
-                          % int(guest_time_after_reset))
+                         % int(guest_time_after_reset))
             guest_hwclock = session.cmd_output("date +%s")
             logging.info("hwclock for compare is '%d' " % int(guest_hwclock))
             delta = abs(int(guest_time_after_reset) - int(guest_hwclock))
@@ -474,7 +471,7 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
                                       "tasklist | findstr /I qemu-ga.exe")
         session = self.vm.wait_for_login(timeout=timeout)
         logging.info("get the memory usage of qemu-ga before run '%s'" %
-                      test_command)
+                     test_command)
         memory_usage_before = self._get_mem_used(session, memory_usage_cmd)
         session.close()
         repeats = int(params.get("repeats", 1))
@@ -484,7 +481,7 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
             logging.info(str(return_msg))
         self.vm.verify_alive()
         logging.info("get the memory usage of qemu-ga after run '%s'" %
-                      test_command)
+                     test_command)
         session = self.vm.wait_for_login(timeout=timeout)
         memory_usage_after = self._get_mem_used(session, memory_usage_cmd)
         session.close()
@@ -557,7 +554,7 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
         if bitmap:
             logging.debug("block allocation bitmap: %s" % bitmap)
             test.error("block allocation bitmap"
-                                  " not empty before test.")
+                       " not empty before test.")
         vm_name = params["main_vm"]
         test_image = "scsi_debug"
         params["start_vm"] = "yes"
@@ -605,7 +602,7 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
         total_block_before_trim = abs(sum([eval(i) for i in
                                       bitmap_before_trim.split(',')]))
         logging.info("the total_block_before_trim is %d"
-                      % total_block_before_trim)
+                     % total_block_before_trim)
 
         logging.info("execute the guest-fstrim cmd")
         self.gagent.fstrim()
@@ -618,7 +615,7 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
         total_block_after_trim = abs(sum([eval(i) for i in
                                      bitmap_after_trim.split(',')]))
         logging.info("the total_block_after_trim is %d"
-                      % total_block_after_trim)
+                     % total_block_after_trim)
 
         if total_block_after_trim > total_block_before_trim:
             raise error.TestFail("the bitmap_after_trim is lager, the command"
@@ -774,7 +771,7 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
             func(test, params, env)
         else:
             test.error("Could not find matching test, check your"
-                                  " config file")
+                       " config file")
 
 
 class QemuGuestAgentBasicCheckWin(QemuGuestAgentBasicCheck):
@@ -820,7 +817,7 @@ class QemuGuestAgentBasicCheckWin(QemuGuestAgentBasicCheck):
         s, o = session.cmd_status_output("mkdir %s" % gagent_guest_dir)
         if bool(s) and str(s) != "1":
             test.error("Could not create qemu-ga directory in "
-                                  "VM '%s', detail: '%s'" % (vm.name, o))
+                       "VM '%s', detail: '%s'" % (vm.name, o))
         logging.info("Copy qemu guest agent program to guest")
         vm.copy_files_to(gagent_host_path, gagent_guest_dir)
 
