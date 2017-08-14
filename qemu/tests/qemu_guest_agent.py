@@ -698,7 +698,6 @@ class QemuGuestAgentBasicCheck(QemuGuestAgentTest):
         if not vm.is_alive():
             test.cancel("VM died,can't continue the test loop.")
         self.gagent.fsfreeze()
-        self.gagent.verify_fsfreeze_status(self.gagent.FSFREEZE_STATUS_FROZEN)
 
         if self.gagent.shutdown(self.gagent.SHUTDOWN_MODE_POWERDOWN):
             self.gagent.verify_fsfreeze_status(self.gagent.FSFREEZE_STATUS_FROZEN)
